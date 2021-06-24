@@ -222,7 +222,7 @@
  * Requires NOZZLE_PARK_FEATURE to park print head in case MMU unit fails.
  * See additional options in Configuration_adv.h.
  */
-#define MMU_MODEL PRUSA_MMU2
+#define MMU_MODEL PRUSA_MMU2 
 
 // A dual extruder that uses a single stepper motor
 //#define SWITCHING_EXTRUDER
