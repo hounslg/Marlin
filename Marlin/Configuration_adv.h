@@ -4142,7 +4142,7 @@
 
   #endif
 
-  //#define MMU2_DEBUG  // Write debug info to serial output
+ // #define MMU2_DEBUG  // Write debug info to serial output
 
 #endif // HAS_PRUSA_MMU2
 
