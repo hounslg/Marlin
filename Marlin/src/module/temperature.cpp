@@ -1064,8 +1064,6 @@ volatile bool Temperature::raw_temps_ready = false;
           if (sample_count == 0) t1_time = MS_TO_SEC_PRECISE(curr_time_ms - heat_start_time_ms);
           temp_samples[sample_count++] = current_temp;
 
-          if (current_temp >= 200.0f) break;
-
           next_test_time_ms += test_interval_ms * sample_distance;
 
         }
@@ -1430,7 +1428,7 @@ int16_t Temperature::getHeaterPower(const heater_id_t heater_id) {
       #define AUTOFAN_CASE(N) TERN(HAS_AUTO_FAN_##N, _AUTOFAN_CASE, _AUTOFAN_NOT)(N)
 
       switch (f) {
-        REPEAT(8, AUTOFAN_CASE)
+        REPEAT(HOTENDS, AUTOFAN_CASE)
         #if HAS_AUTO_CHAMBER_FAN && !AUTO_CHAMBER_IS_E
           case CHAMBER_FAN_INDEX: _UPDATE_AUTO_FAN(CHAMBER, fan_on, CHAMBER_AUTO_FAN_SPEED); break;
         #endif
