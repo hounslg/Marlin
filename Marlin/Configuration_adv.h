@@ -3931,7 +3931,7 @@
 // @section custom config menu
 
 // Custom Menu: Configuration Menu
-//#define CUSTOM_MENU_CONFIG
+#define CUSTOM_MENU_CONFIG
 #if ENABLED(CUSTOM_MENU_CONFIG)
   #define CUSTOM_MENU_CONFIG_TITLE "GH Initial Set"
   
@@ -3944,8 +3944,8 @@
   #define CONFIG_MENU_ITEM_1_GCODE "M206 Y-8"
   //#define CONFIG_MENU_ITEM_1_CONFIRM        // Show a confirmation dialog before this action
 
-  #define CONFIG_MENU_ITEM_2_DESC "Hotend PID 205 8 cycles"
-  #define CONFIG_MENU_ITEM_2_GCODE "M303 E0 S200 U1 C8\nM500"
+  #define CONFIG_MENU_ITEM_2_DESC "Hotend PID 220 8 cycles"
+  #define CONFIG_MENU_ITEM_2_GCODE "M303 E0 S220 U1 C8\nM500"
   #define CONFIG_MENU_ITEM_2_CONFIRM
 
   #define CONFIG_MENU_ITEM_3_DESC "Bed PID 65 8 cycles"
