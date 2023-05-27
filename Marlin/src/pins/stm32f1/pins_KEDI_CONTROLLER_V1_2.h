@@ -72,11 +72,11 @@
 
 // L6470 or L6474 on SPI
 #if HAS_DRIVER(L6470) || HAS_DRIVER(L6474)        // Shared with SPI on EXP2
-    #define L6470_CHAIN_SCK_PIN             PB3
-    #define L6470_CHAIN_MISO_PIN            PB4
-    #define L6470_CHAIN_MOSI_PIN            PB5
-    #define L6470_CHAIN_SS_PIN              PA15
-	#define ENABLE_RESET_L64XX_CHIPS
+  #define L6470_CHAIN_SCK_PIN               PB3
+  #define L6470_CHAIN_MISO_PIN              PB4
+  #define L6470_CHAIN_MOSI_PIN              PB5
+  #define L6470_CHAIN_SS_PIN                PA15
+  #define ENABLE_RESET_L64XX_CHIPS
 #endif
 
 // TMC2130 on SPI
@@ -280,7 +280,7 @@
 #endif
 
 #if SD_CONNECTION_IS(LCD)
-  #define SPI_DEVICE                           3
+  #define SPI_DEVICE                           3  // Maple
   #define SD_DETECT_PIN              EXP2_04_PIN
   #define SD_SCK_PIN                 EXP2_09_PIN
   #define SD_MISO_PIN                EXP2_10_PIN
