@@ -2446,7 +2446,7 @@
 //
 // G2/G3 Arc Support
 //
-//#define ARC_SUPPORT                 // Requires ~3226 bytes
+#define ARC_SUPPORT                 // Requires ~3226 bytes
 #if ENABLED(ARC_SUPPORT)
   #define MIN_ARC_SEGMENT_MM      0.1 // (mm) Minimum length of each arc segment
   #define MAX_ARC_SEGMENT_MM      1.0 // (mm) Maximum length of each arc segment
@@ -3956,7 +3956,7 @@
 // Custom Menu: Configuration Menu
 #define CUSTOM_MENU_CONFIG
 #if ENABLED(CUSTOM_MENU_CONFIG)
-  #define CUSTOM_MENU_CONFIG_TITLE "GH Initial Set"
+  #define CUSTOM_MENU_CONFIG_TITLE "Initial Set-up"
   
   #define CUSTOM_MENU_CONFIG_SCRIPT_DONE "M117 Setup Done"
   #define CUSTOM_MENU_CONFIG_SCRIPT_AUDIBLE_FEEDBACK
@@ -3967,8 +3967,8 @@
   #define CONFIG_MENU_ITEM_1_GCODE "M206 Y-12"
   //#define CONFIG_MENU_ITEM_1_CONFIRM        // Show a confirmation dialog before this action
 
-  #define CONFIG_MENU_ITEM_2_DESC "Hotend PID 210 8 cycles"
-  #define CONFIG_MENU_ITEM_2_GCODE "M303 E0 S210 U1 C8\nM500"
+  #define CONFIG_MENU_ITEM_2_DESC "Hotend PID 215 8 cycles"
+  #define CONFIG_MENU_ITEM_2_GCODE "M303 E0 S215 U1 C8\nM500"
   #define CONFIG_MENU_ITEM_2_CONFIRM
 
   #define CONFIG_MENU_ITEM_3_DESC "Bed PID 65 8 cycles"
