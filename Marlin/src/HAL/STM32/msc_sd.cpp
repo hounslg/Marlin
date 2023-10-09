@@ -73,7 +73,7 @@ public:
       uint8_t *cBuf = pBuf;
       sd2card->writeStart(blkAddr, blkLen);
       bool okay = true;                   // Assume success
-      for (uint32_t i = blkLen; i--;)  {
+      for (uint32_t i = blkLen; i--;) {
         hal.watchdog_refresh();
         if (!sd2card->writeData(cBuf)) {  // Write. Did it fail?
           sd2card->writeStop();           // writeStop for new writeStart
