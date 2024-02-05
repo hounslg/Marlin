@@ -4070,8 +4070,8 @@
   #define CUSTOM_MENU_CONFIG_SCRIPT_RETURN  // Return to status screen after a script
   #define CUSTOM_MENU_CONFIG_ONLY_IDLE        // Only show custom menu when the machine is idle
 
-  #define CONFIG_MENU_ITEM_1_DESC "Bed Y offset by 8mm"
-  #define CONFIG_MENU_ITEM_1_GCODE "M206 Y-10"
+  #define CONFIG_MENU_ITEM_1_DESC "Bed Y offset by 12mm"
+  #define CONFIG_MENU_ITEM_1_GCODE "M206 Y-12"
   //#define CONFIG_MENU_ITEM_1_CONFIRM        // Show a confirmation dialog before this action
 
   #define CONFIG_MENU_ITEM_2_DESC "Hotend PID 210 8 cycles"
