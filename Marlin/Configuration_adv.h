@@ -2511,7 +2511,7 @@
 //
 // G2/G3 Arc Support
 //
-#define ARC_SUPPORT                 // Requires ~3226 bytes
+//#define ARC_SUPPORT                 // Requires ~3226 bytes
 #if ENABLED(ARC_SUPPORT)
   #define MIN_ARC_SEGMENT_MM      0.1 // (mm) Minimum length of each arc segment
   #define MAX_ARC_SEGMENT_MM      1.0 // (mm) Maximum length of each arc segment
@@ -2614,9 +2614,9 @@
 
 // The number of linear moves that can be in the planner at once.
 #if ALL(HAS_MEDIA, DIRECT_STEPPING)
-  #define BLOCK_BUFFER_SIZE  64
-#elif HAS_MEDIA
   #define BLOCK_BUFFER_SIZE 64
+#elif HAS_MEDIA
+	#define BLOCK_BUFFER_SIZE 64
 #else
   #define BLOCK_BUFFER_SIZE 64
 #endif
@@ -2640,7 +2640,7 @@
 // Without XON/XOFF flow control (see SERIAL_XON_XOFF below) 32 bytes should be enough.
 // To use flow control, set this buffer size to at least 1024 bytes.
 // :[0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
-#define RX_BUFFER_SIZE 2048
+#define RX_BUFFER_SIZE 1024
 
 #if RX_BUFFER_SIZE >= 1024
   // Enable to have the controller send XON/XOFF control characters to
@@ -4426,7 +4426,7 @@
     { 14.4,  871 }, \
     { 36.0, 1393 }, \
     { 14.4,  871 }, \
-    { 70.0,  198 }
+    { 50.0,  198 }
 
   #define MMU2_RAMMING_SEQUENCE \
     {   1.0, 1000 }, \
