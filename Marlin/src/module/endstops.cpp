@@ -31,9 +31,8 @@
 #include "temperature.h"
 #include "../lcd/marlinui.h"
 
-#if ENABLED(FT_MOTION)
-  #include "ft_motion.h"
-#endif
+#define DEBUG_OUT ALL(USE_SENSORLESS, DEBUG_LEVELING_FEATURE)
+#include "../core/debug_out.h"
 
 #if ENABLED(ENDSTOP_INTERRUPTS_FEATURE)
   #include HAL_PATH(.., endstop_interrupts.h)
@@ -54,9 +53,6 @@
 #if HAS_BED_PROBE
   #include "probe.h"
 #endif
-
-#define DEBUG_OUT ALL(USE_SENSORLESS, DEBUG_LEVELING_FEATURE)
-#include "../core/debug_out.h"
 
 Endstops endstops;
 
@@ -834,13 +830,9 @@ void Endstops::update() {
 
   // Signal, after validation, if an endstop limit is pressed or not
 
-  #define AXIS_IS_MOVING(A) TERN(FT_MOTION, ftMotion, stepper).axis_is_moving(_AXIS(A))
-  #define AXIS_DIR_REV(A)  !TERN(FT_MOTION, ftMotion, stepper).motor_direction(A)
-
   #if HAS_X_AXIS
-    if (AXIS_IS_MOVING(X)) {
-      const AxisEnum x_head = TERN0(FT_MOTION, ftMotion.cfg.active) ? X_AXIS : X_AXIS_HEAD;
-      if (AXIS_DIR_REV(x_head)) {
+    if (stepper.axis_is_moving(X_AXIS)) {
+      if (!stepper.motor_direction(X_AXIS_HEAD)) {
         #if HAS_X_MIN_STATE
           PROCESS_ENDSTOP_X(MIN);
           #if   CORE_DIAG(XY, Y, MIN)
@@ -872,9 +864,8 @@ void Endstops::update() {
   #endif // HAS_X_AXIS
 
   #if HAS_Y_AXIS
-    if (AXIS_IS_MOVING(Y)) {
-      const AxisEnum y_head = TERN0(FT_MOTION, ftMotion.cfg.active) ? Y_AXIS : Y_AXIS_HEAD;
-      if (AXIS_DIR_REV(y_head)) {
+    if (stepper.axis_is_moving(Y_AXIS)) {
+      if (!stepper.motor_direction(Y_AXIS_HEAD)) {
         #if HAS_Y_MIN_STATE
           PROCESS_ENDSTOP_Y(MIN);
           #if   CORE_DIAG(XY, X, MIN)
@@ -906,9 +897,8 @@ void Endstops::update() {
   #endif // HAS_Y_AXIS
 
   #if HAS_Z_AXIS
-    if (AXIS_IS_MOVING(Z)) {
-      const AxisEnum z_head = TERN0(FT_MOTION, ftMotion.cfg.active) ? Z_AXIS : Z_AXIS_HEAD;
-      if (AXIS_DIR_REV(z_head)) {
+    if (stepper.axis_is_moving(Z_AXIS)) {
+      if (!stepper.motor_direction(Z_AXIS_HEAD)) {
         // Z- : Gantry down, bed up
         #if HAS_Z_MIN_STATE
           // If the Z_MIN_PIN is being used for the probe there's no
@@ -954,8 +944,8 @@ void Endstops::update() {
   #endif // HAS_Z_AXIS
 
   #if HAS_I_AXIS && HAS_I_STATE
-    if (AXIS_IS_MOVING(I)) {
-      if (AXIS_DIR_REV(I_AXIS_HEAD)) {
+    if (stepper.axis_is_moving(I_AXIS)) {
+      if (!stepper.motor_direction(I_AXIS_HEAD)) {
         #if HAS_I_MIN_STATE
           PROCESS_ENDSTOP(I, MIN);
         #endif
@@ -969,8 +959,8 @@ void Endstops::update() {
   #endif // HAS_I_AXIS
 
   #if HAS_J_AXIS && HAS_J_STATE
-    if (AXIS_IS_MOVING(J)) {
-      if (AXIS_DIR_REV(J_AXIS_HEAD)) {
+    if (stepper.axis_is_moving(J_AXIS)) {
+      if (!stepper.motor_direction(J_AXIS_HEAD)) {
         #if HAS_J_MIN_STATE
           PROCESS_ENDSTOP(J, MIN);
         #endif
@@ -984,8 +974,8 @@ void Endstops::update() {
   #endif // HAS_J_AXIS
 
   #if HAS_K_AXIS && HAS_K_STATE
-    if (AXIS_IS_MOVING(K)) {
-      if (AXIS_DIR_REV(K_AXIS_HEAD)) {
+    if (stepper.axis_is_moving(K_AXIS)) {
+      if (!stepper.motor_direction(K_AXIS_HEAD)) {
         #if HAS_K_MIN_STATE
           PROCESS_ENDSTOP(K, MIN);
         #endif
@@ -999,8 +989,8 @@ void Endstops::update() {
   #endif // HAS_K_AXIS
 
   #if HAS_U_AXIS && HAS_U_STATE
-    if (AXIS_IS_MOVING(U)) {
-      if (AXIS_DIR_REV(U_AXIS_HEAD)) {
+    if (stepper.axis_is_moving(U_AXIS)) {
+      if (!stepper.motor_direction(U_AXIS_HEAD)) {
         #if HAS_U_MIN_STATE
           PROCESS_ENDSTOP(U, MIN);
         #endif
@@ -1014,8 +1004,8 @@ void Endstops::update() {
   #endif // HAS_U_AXIS
 
   #if HAS_V_AXIS && HAS_V_STATE
-    if (AXIS_IS_MOVING(V)) {
-      if (AXIS_DIR_REV(V_AXIS_HEAD)) {
+    if (stepper.axis_is_moving(V_AXIS)) {
+      if (!stepper.motor_direction(V_AXIS_HEAD)) {
         #if HAS_V_MIN_STATE
           PROCESS_ENDSTOP(V, MIN);
         #endif
@@ -1029,8 +1019,8 @@ void Endstops::update() {
   #endif // HAS_V_AXIS
 
   #if HAS_W_AXIS && HAS_W_STATE
-    if (AXIS_IS_MOVING(W)) {
-      if (AXIS_DIR_REV(W_AXIS_HEAD)) {
+    if (stepper.axis_is_moving(W_AXIS)) {
+      if (!stepper.motor_direction(W_AXIS_HEAD)) {
         #if HAS_W_MIN_STATE
           PROCESS_ENDSTOP(W, MIN);
         #endif
