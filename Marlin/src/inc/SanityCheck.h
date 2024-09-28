@@ -27,6 +27,12 @@
  * Test configuration values for errors at compile-time.
  */
 
+//========================================================
+// Get requirements for the benefit of IntelliSense, etc.
+//
+#include "MarlinConfig.h"
+//========================================================
+
 /**
  * Require gcc 4.7 or newer (first included with Arduino 1.6.8) for C++11 features.
  */
@@ -471,7 +477,7 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
  * Babystepping
  */
 #if ENABLED(BABYSTEPPING)
-  #if ENABLED(SCARA)
+  #if IS_SCARA
     #error "BABYSTEPPING is not implemented for SCARA yet."
   #elif ENABLED(BABYSTEP_XY) && ANY(MARKFORGED_XY, MARKFORGED_YX)
     #error "BABYSTEPPING only implemented for Z axis on MarkForged."
@@ -1770,7 +1776,7 @@ static_assert(NUM_SERVOS <= NUM_SERVO_PLUGS, "NUM_SERVOS (or some servo index) i
  * Make sure Z_CLEARANCE_FOR_HOMING is below Z_MAX_POS
  */
 #if HAS_Z_AXIS
-  static_assert(Z_CLEARANCE_FOR_HOMING <= Z_MAX_POS, "Z_CLEARANCE_FOR_HOMING must be smaller than or equal to Z_MAX_POS.");
+  static_assert(Z_CLEARANCE_FOR_HOMING <= Z_MAX_POS, "Z_CLEARANCE_FOR_HOMING must be less than or equal to Z_MAX_POS.");
 #endif
 
 // Check Safe Bed Leveling settings
@@ -2730,7 +2736,7 @@ static_assert(NUM_SERVOS <= NUM_SERVO_PLUGS, "NUM_SERVOS (or some servo index) i
   + COUNT_ENABLED(ANYCUBIC_LCD_I3MEGA, ANYCUBIC_LCD_CHIRON, ANYCUBIC_TFT35, ANYCUBIC_LCD_VYPER) \
   + DGUS_UI_IS(ORIGIN) + DGUS_UI_IS(FYSETC) + DGUS_UI_IS(HIPRECY) + DGUS_UI_IS(MKS) + DGUS_UI_IS(RELOADED) + DGUS_UI_IS(IA_CREALITY) \
   + COUNT_ENABLED(ENDER2_STOCKDISPLAY, CR10_STOCKDISPLAY) \
-  + COUNT_ENABLED(DWIN_CREALITY_LCD, DWIN_LCD_PROUI, DWIN_CREALITY_LCD_JYERSUI, DWIN_MARLINUI_PORTRAIT, DWIN_MARLINUI_LANDSCAPE) \
+  + COUNT_ENABLED(DWIN_CREALITY_LCD, DWIN_LCD_PROUI, DWIN_CREALITY_LCD_JYERSUI, DWIN_MARLINUI_PORTRAIT, DWIN_MARLINUI_LANDSCAPE, SOVOL_SV06_RTS) \
   + COUNT_ENABLED(FYSETC_MINI_12864_X_X, FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0, FYSETC_GENERIC_12864_1_1) \
   + COUNT_ENABLED(LCD_SAINSMART_I2C_1602, LCD_SAINSMART_I2C_2004) \
   + COUNT_ENABLED(MKS_12864OLED, MKS_12864OLED_SSD1306) \
@@ -4312,9 +4318,9 @@ static_assert(_PLUS_TEST(3), "DEFAULT_MAX_ACCELERATION values must be positive."
       static_assert(SHAPING_FREQ_X == SHAPING_FREQ_Y && SHAPING_FREQ_Y == SHAPING_FREQ_Z, "SHAPING_FREQ_X, SHAPING_FREQ_Y and SHAPING_FREQ_Z must be the same for DELTA.");
       static_assert(SHAPING_ZETA_X == SHAPING_ZETA_Y && SHAPING_ZETA_Y == SHAPING_ZETA_Z, "SHAPING_ZETA_X, SHAPING_ZETA_Y and SHAPING_ZETA_Z must be the same for DELTA.");
     #endif
-  #elif ENABLED(SCARA)
+  #elif IS_SCARA
     #error "Input Shaping is not compatible with SCARA kinematics."
-  #elif ENABLED(TPARA)
+  #elif ENABLED(AXEL_TPARA)
     #error "Input Shaping is not compatible with TPARA kinematics."
   #elif ENABLED(POLAR)
     #error "Input Shaping is not compatible with POLAR kinematics."
