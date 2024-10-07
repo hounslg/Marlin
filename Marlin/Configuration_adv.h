@@ -971,7 +971,7 @@
 
   // Feature: Switch into SW mode after a deploy. It makes the output pulse longer. Can be useful
   //          in special cases, like noisy or filtered input configurations.
-  #define BLTOUCH_FORCE_SW_MODE
+  //#define BLTOUCH_FORCE_SW_MODE
 
   /**
    * Settings for BLTouch Smart 3.0 and 3.1
@@ -1106,7 +1106,7 @@
   #define RESTORE_LEVELING_AFTER_G35    // Enable to restore leveling setup after operation
   //#define REPORT_TRAMMING_MM          // Report Z deviation (mm) for each point relative to the first
 
-  //#define ASSISTED_TRAMMING_WIZARD    // Add a Tramming Wizard to the LCD menu
+  #define ASSISTED_TRAMMING_WIZARD    // Add a Tramming Wizard to the LCD menu
 
   //#define ASSISTED_TRAMMING_WAIT_POSITION { X_CENTER, Y_CENTER, 30 } // Move the nozzle out of the way for adjustment
 
@@ -1837,7 +1837,7 @@
   //#define UTF_FILENAME_SUPPORT
 
   #define LONG_FILENAME_HOST_SUPPORT      // Get the long filename of a file/folder with 'M33 <dosname>' and list long filenames with 'M20 L'
-  //#define LONG_FILENAME_WRITE_SUPPORT   // Create / delete files with long filenames via M28, M30, and Binary Transfer Protocol
+  #define LONG_FILENAME_WRITE_SUPPORT   // Create / delete files with long filenames via M28, M30, and Binary Transfer Protocol
   //#define M20_TIMESTAMP_SUPPORT         // Include timestamps by adding the 'T' flag to M20 commands
 
   #define SCROLL_LONG_FILENAMES           // Scroll long filenames in the SD card menu
@@ -4108,6 +4108,9 @@
   #define CONFIG_MENU_ITEM_3_CONFIRM
   //#define CONFIG_MENU_ITEM_2_CONFIRM
 
+  #define CONFIG_MENU_ITEM_4_DESC "M593 Input Shaping X & Y"
+  #define CONFIG_MENU_ITEM_4_GCODE "M593 X F33.00 D0.25\nM593 Y F40.00 D0.5\nM500"
+  #define CONFIG_MENU_ITEM_4_CONFIRM															
   //#define CONFIG_MENU_ITEM_3_DESC "Radio OFF"
   //#define CONFIG_MENU_ITEM_3_GCODE "M118 [ESP110] OFF pwd=12345678"
   //#define CONFIG_MENU_ITEM_3_CONFIRM
