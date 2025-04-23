@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2025 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,25 +21,17 @@
  */
 #pragma once
 
-#ifdef __IMXRT1062__
-  #include <NativeEthernet.h>
+/**
+ * Aquila v1.0.1 GD32 MFL (GD32F103RC) board pin assignments
+ */
+
+#define ALLOW_GD32F1
+
+#ifndef BOARD_INFO_NAME
+  #define BOARD_INFO_NAME      "Aquila v1.0.1 GD32 MFL"
+#endif
+#ifndef DEFAULT_MACHINE_NAME
+  #define DEFAULT_MACHINE_NAME "Aquila"
 #endif
 
-#include "../HAL/shared/Marduino.h"
-
-// Teensy 4.1 uses internal MAC Address
-
-class MarlinEthernet {
-  public:
-    static bool hardware_enabled, have_telnet_client;
-    static IPAddress ip, myDns, gateway, subnet;
-    static EthernetClient telnetClient;
-    static void init();
-    static void check();
-
-    static void ETH0_report(const bool forReplay=true);
-    static void MAC_report(const bool forReplay=true);
-    static void ip_report(const uint16_t cmd, FSTR_P const post, const IPAddress &ipo, const bool forReplay=true);
-};
-
-extern MarlinEthernet ethernet;
+#include "../stm32f1/pins_CREALITY_V4.h"

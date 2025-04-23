@@ -437,7 +437,7 @@ namespace LanguageNarrow_ru {
   LSTR MSG_FILAMENTUNLOAD_ALL               = _UxGT("Выгрузить всё");
   #if HAS_MULTI_VOLUME
     LSTR MSG_ATTACH_SD_MEDIA                = _UxGT("Установить SD карту");
-    LSTR MSG_ATTACH_USB_MEDIA               = _UxGT("Установить флешка");
+    LSTR MSG_ATTACH_USB_MEDIA               = _UxGT("Монтировать USB"); // Установить флешка
   #else
     LSTR MSG_ATTACH_MEDIA                   = _UxGT("Установить SD карту");
   #endif
@@ -766,7 +766,6 @@ namespace LanguageNarrow_ru {
   LSTR MSG_SINGLENOZZLE_WIPE_RETRACT        = _UxGT("Вытирание при откате");
   LSTR MSG_PARK_FAILED                      = _UxGT("Не удалось запарковать");
   LSTR MSG_FILAMENTUNLOAD                   = _UxGT("Выгрузить филамент");
-  LSTR MSG_ATTACH_USB_MEDIA                 = _UxGT("Монтировать USB");
   LSTR MSG_BLTOUCH_SPEED_MODE               = _UxGT("Высокая скорость");
   LSTR MSG_MANUAL_PENUP                     = _UxGT("Поднять перо");
   LSTR MSG_MANUAL_PENDOWN                   = _UxGT("Опустить перо");
@@ -811,7 +810,7 @@ namespace LanguageNarrow_ru {
 
   // did not translate as there is no local terms/slang yet
   LSTR MSG_FIXED_TIME_MOTION                = _UxGT("FT Motion");
-  LSTR MSG_FTM_CMPN_MODE                    = _UxGT("@ Режим комп.:");
+  LSTR MSG_FTM_CMPN_MODE                    = _UxGT("@ Режим комп.: $");
   LSTR MSG_FTM_ZV                           = _UxGT("ZV");
   LSTR MSG_FTM_ZVD                          = _UxGT("ZVD");
   LSTR MSG_FTM_EI                           = _UxGT("EI");
@@ -820,7 +819,7 @@ namespace LanguageNarrow_ru {
   LSTR MSG_FTM_MZV                          = _UxGT("MZV");
   //LSTR MSG_FTM_ULENDO_FBS                 = _UxGT("Ulendo ФBС");
   //LSTR MSG_FTM_DISCTF                     = _UxGT("DISCTF");
-  LSTR MSG_FTM_DYN_MODE                     = _UxGT("DF Mode:");
+  LSTR MSG_FTM_DYN_MODE                     = _UxGT("DF Mode: $");
   LSTR MSG_FTM_Z_BASED                      = _UxGT("Z-based");
   LSTR MSG_FTM_MASS_BASED                   = _UxGT("Mass-based");
   LSTR MSG_FTM_BASE_FREQ_N                  = _UxGT("@ Base Freq.");
