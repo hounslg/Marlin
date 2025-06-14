@@ -88,7 +88,7 @@
 
 /**
  * Serial Port Baud Rate
- * This is the default communication speed for all serial ports.
+ * This is the default communication speed for all sertial ports.
  * Set the baud rate defaults for additional serial ports below.
  *
  * 250000 works in most cases, but you might try a lower speed if
@@ -1297,7 +1297,7 @@
  * Override with M92 (when enabled below)
  *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 200, 200, 400, 729.4652 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 200, 200, 400, 728.08184 }
 
 /**
  * Enable support for M92. Disable to save at least ~530 bytes of flash.
@@ -1322,7 +1322,7 @@
  * Override with M201
  *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
-#define DEFAULT_MAX_ACCELERATION      { 500, 500, 100, 5000 }
+#define DEFAULT_MAX_ACCELERATION      { 800, 800, 150, 3000 }
 
 //#define LIMITED_MAX_ACCEL_EDITING     // Limit edit via M201 or LCD to DEFAULT_MAX_ACCELERATION * 2
 #if ENABLED(LIMITED_MAX_ACCEL_EDITING)
