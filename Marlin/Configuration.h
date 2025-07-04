@@ -88,7 +88,7 @@
 
 /**
  * Serial Port Baud Rate
- * This is the default communication speed for all sertial ports.
+ * This is the default communication speed for all serial ports.
  * Set the baud rate defaults for additional serial ports below.
  *
  * 250000 works in most cases, but you might try a lower speed if
