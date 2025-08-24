@@ -208,22 +208,12 @@ inline void report_more_positions() {
 inline void report_logical_position(const xyze_pos_t &rpos) {
   const xyze_pos_t lpos = rpos.asLogical();
   #if NUM_AXES
-    SERIAL_ECHOPGM_P(
-      LIST_N(DOUBLE(NUM_AXES),
-           X_LBL, lpos.x,
-        SP_Y_LBL, lpos.y,
-        SP_Z_LBL, lpos.z,
-        SP_I_LBL, lpos.i,
-        SP_J_LBL, lpos.j,
-        SP_K_LBL, lpos.k,
-        SP_U_LBL, lpos.u,
-        SP_V_LBL, lpos.v,
-        SP_W_LBL, lpos.w
-      )
-    );
-  #endif
-  #if HAS_EXTRUDERS
-    SERIAL_ECHOPGM_P(SP_E_LBL, lpos.e);
+    SERIAL_ECHOPGM_P(LOGICAL_AXIS_PAIRED_LIST(
+      SP_E_LBL, lpos.e,
+         X_LBL, lpos.x,  SP_Y_LBL, lpos.y,  SP_Z_LBL, lpos.z,
+      SP_I_LBL, lpos.i,  SP_J_LBL, lpos.j,  SP_K_LBL, lpos.k,
+      SP_U_LBL, lpos.u,  SP_V_LBL, lpos.v,  SP_W_LBL, lpos.w
+    ));
   #endif
 }
 
@@ -608,22 +598,12 @@ void report_current_position_projected() {
     get_cartesian_from_steppers();
     const xyz_pos_t lpos = cartes.asLogical();
 
-    SERIAL_ECHOPGM_P(
-      LIST_N(DOUBLE(NUM_AXES),
-           X_LBL, lpos.x,
-        SP_Y_LBL, lpos.y,
-        SP_Z_LBL, lpos.z,
-        SP_I_LBL, lpos.i,
-        SP_J_LBL, lpos.j,
-        SP_K_LBL, lpos.k,
-        SP_U_LBL, lpos.u,
-        SP_V_LBL, lpos.v,
-        SP_W_LBL, lpos.w
-      )
-      #if HAS_EXTRUDERS
-        , SP_E_LBL, current_position.e
-      #endif
-    );
+    SERIAL_ECHOPGM_P(LOGICAL_AXIS_PAIRED_LIST(
+      SP_E_LBL, current_position.e,
+         X_LBL, lpos.x,  SP_Y_LBL, lpos.y,  SP_Z_LBL, lpos.z,
+      SP_I_LBL, lpos.i,  SP_J_LBL, lpos.j,  SP_K_LBL, lpos.k,
+      SP_U_LBL, lpos.u,  SP_V_LBL, lpos.v,  SP_W_LBL, lpos.w
+    ));
 
     report_more_positions();
     report_current_grblstate_moving();
@@ -1990,7 +1970,7 @@ void prepare_line_to_destination() {
    */
   feedRate_t get_homing_bump_feedrate(const AxisEnum axis) {
     #if HOMING_Z_WITH_PROBE
-      if (axis == Z_AXIS) return MMM_TO_MMS(Z_PROBE_FEEDRATE_SLOW);
+      if (axis == Z_AXIS) return z_probe_slow_mm_s;
     #endif
     static const uint8_t homing_bump_divisor[] PROGMEM = HOMING_BUMP_DIVISOR;
     uint8_t hbd = pgm_read_byte(&homing_bump_divisor[axis]);

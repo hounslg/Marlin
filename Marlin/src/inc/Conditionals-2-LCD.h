@@ -242,7 +242,7 @@
 
   #define IS_ULTIPANEL 1
   #define U8GLIB_SSD1309
-  #define LCD_RESET_PIN LCD_PINS_D6 //  This controller need a reset pin
+  #define LCD_RESET_PIN LCD_PINS_D6         // ULTI_CONTROLLER needs a reset pin
   #define STD_ENCODER_PULSES_PER_STEP 4
   #define STD_ENCODER_STEPS_PER_MENU_ITEM 1
   #ifndef PCA9632
@@ -661,14 +661,6 @@
 // Slim menu optimizations
 #if ENABLED(SLIM_LCD_MENUS)
   #define BOOT_MARLIN_LOGO_SMALL
-#endif
-
-// Flow and feedrate editing
-#if HAS_EXTRUDERS && ANY(HAS_MARLINUI_MENU, DWIN_CREALITY_LCD, DWIN_LCD_PROUI, MALYAN_LCD, TOUCH_SCREEN)
-  #define HAS_FLOW_EDIT 1
-#endif
-#if ANY(HAS_MARLINUI_MENU, ULTIPANEL_FEEDMULTIPLY, DWIN_CREALITY_LCD, DWIN_LCD_PROUI, MALYAN_LCD, TOUCH_SCREEN)
-  #define HAS_FEEDRATE_EDIT 1
 #endif
 
 /**

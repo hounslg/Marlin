@@ -21,6 +21,7 @@ on:
     branches:
     - bugfix-2.1.x
     - 2.1.x
+    - release-*
     paths-ignore:
     - config/**
     - data/**
@@ -35,6 +36,9 @@ jobs:
     if: github.repository == 'MarlinFirmware/Marlin'
 
     runs-on: ubuntu-22.04
+
+    env:
+      CONFIG_BRANCH: ${{ github.base_ref || github.ref_name }}
 
     strategy:
       fail-fast: true

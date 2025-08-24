@@ -89,6 +89,12 @@ xyze_long_t FTMotion::steps = { 0 };            // Step count accumulator.
 
 uint32_t FTMotion::interpIdx = 0;               // Index of current data point being interpolated.
 
+#if ENABLED(DISTINCT_E_FACTORS)
+  uint8_t FTMotion::block_extruder_axis;        // Cached E Axis from last-fetched block
+#elif HAS_EXTRUDERS
+  constexpr uint8_t FTMotion::block_extruder_axis;
+#endif
+
 // Shaping variables.
 #if HAS_FTM_SHAPING
   FTMotion::shaping_t FTMotion::shaping = {
@@ -143,6 +149,12 @@ void FTMotion::loop() {
       continue;
     }
     loadBlockData(stepper.current_block);
+
+    // If the endstop is already pressed, endstop interrupts won't invoke
+    // endstop_triggered and the move will grind. So check here for a
+    // triggered endstop, which shortly marks the block for discard.
+    endstops.update();
+
     blockProcRdy = true;
     // Some kinematics track axis motion in HX, HY, HZ
     #if ANY(CORE_IS_XY, CORE_IS_XZ, MARKFORGED_XY, MARKFORGED_YX)
@@ -388,7 +400,8 @@ void FTMotion::reset() {
     shaping.zi_idx = 0;
   #endif
 
-  TERN_(HAS_EXTRUDERS, e_raw_z1 = e_advanced_z1 = 0.0f);
+  TERN_(HAS_EXTRUDERS, e_raw_z1 = e_advanced_z1 = 0.0f);  // Reset linear advance variables.
+  TERN_(DISTINCT_E_FACTORS, block_extruder_axis = E_AXIS);
 
   axis_move_end_ti.reset();
 }
@@ -428,13 +441,7 @@ void FTMotion::runoutBlock() {
   const int32_t n_diff = n_to_settle_shaper - n_to_fill_batch,
                 n_to_fill_batch_after_settling = n_diff > 0 ? (FTM_BATCH_SIZE) - (n_diff % (FTM_BATCH_SIZE)) : -n_diff;
 
-  const int32_t n_to_settle_and_fill_batch = n_to_settle_shaper + n_to_fill_batch_after_settling;
-
-  const int32_t N_needed_to_propagate_to_stepper = PROP_BATCHES;
-
-  const int32_t n_to_use = N_needed_to_propagate_to_stepper * (FTM_BATCH_SIZE) + n_to_settle_and_fill_batch;
-
-  max_intervals = n_to_use;
+  max_intervals =  PROP_BATCHES * (FTM_BATCH_SIZE) + n_to_settle_shaper + n_to_fill_batch_after_settling;
 
   blockProcRdy = true;
 }
@@ -453,13 +460,15 @@ void FTMotion::init() {
 
 // Load / convert block data from planner to fixed-time control variables.
 void FTMotion::loadBlockData(block_t * const current_block) {
+  // Cache the extruder index for this block
+  TERN_(DISTINCT_E_FACTORS, block_extruder_axis = E_AXIS_N(current_block->extruder));
 
   const float totalLength = current_block->millimeters,
               oneOverLength = 1.0f / totalLength;
 
   startPosn = endPosn_prevBlock;
   const xyze_pos_t moveDist = LOGICAL_AXIS_ARRAY(
-    current_block->steps.e * planner.mm_per_step[E_AXIS_N(current_block->extruder)] * (current_block->direction_bits.e ? 1 : -1),
+    current_block->steps.e * planner.mm_per_step[block_extruder_axis] * (current_block->direction_bits.e ? 1 : -1),
     current_block->steps.x * planner.mm_per_step[X_AXIS] * (current_block->direction_bits.x ? 1 : -1),
     current_block->steps.y * planner.mm_per_step[Y_AXIS] * (current_block->direction_bits.y ? 1 : -1),
     current_block->steps.z * planner.mm_per_step[Z_AXIS] * (current_block->direction_bits.z ? 1 : -1),
@@ -568,36 +577,32 @@ void FTMotion::loadBlockData(block_t * const current_block) {
   #endif
   TERN_(HAS_Z_AXIS, _SET_MOVE_END(Z));
   SECONDARY_AXIS_MAP(_SET_MOVE_END);
-
-  // If the endstop is already pressed, endstop interrupts won't invoke
-  // endstop_triggered and the move will grind. So check here for a
-  // triggered endstop, which shortly marks the block for discard.
-  endstops.update();
-
 }
 
 // Generate data points of the trajectory.
 void FTMotion::makeVector() {
   do {
-    float accel_k = 0.0f;                                 // (mm/s^2) Acceleration K factor
     float tau = (makeVector_idx + 1) * (FTM_TS);          // (s) Time since start of block
     float dist = 0.0f;                                    // (mm) Distance traveled
+    #if HAS_EXTRUDERS
+      float accel_k = 0.0f;                               // (mm/s^2) Acceleration K factor
+    #endif
 
     if (makeVector_idx < N1) {
       // Acceleration phase
       dist = (f_s * tau) + (0.5f * accel_P * sq(tau));    // (mm) Distance traveled for acceleration phase since start of block
-      accel_k = accel_P;                                  // (mm/s^2) Acceleration K factor from Accel phase
+      TERN_(HAS_EXTRUDERS, accel_k = accel_P);            // (mm/s^2) Acceleration K factor from Accel phase
     }
     else if (makeVector_idx < (N1 + N2)) {
       // Coasting phase
       dist = s_1e + F_P * (tau - N1 * (FTM_TS));          // (mm) Distance traveled for coasting phase since start of block
-      //accel_k = 0.0f;
+      //TERN_(HAS_EXTRUDERS, accel_k = 0.0f);
     }
     else {
       // Deceleration phase
       tau -= (N1 + N2) * (FTM_TS);                        // (s) Time since start of decel phase
       dist = s_2e + F_P * tau + 0.5f * decel_P * sq(tau); // (mm) Distance traveled for deceleration phase since start of block
-      accel_k = decel_P;                                  // (mm/s^2) Acceleration K factor from Decel phase
+      TERN_(HAS_EXTRUDERS, accel_k = decel_P);            // (mm/s^2) Acceleration K factor from Decel phase
     }
 
     #define _SET_TRAJ(q) traj.q[makeVector_batchIdx] = startPosn.q + ratio.q * dist;
@@ -721,7 +726,7 @@ void FTMotion::convertToSteps(const uint32_t idx) {
   #if ENABLED(STEPS_ROUNDING)
     #define TOSTEPS(A,B) int32_t(trajMod.A[idx] * planner.settings.axis_steps_per_mm[B] + (trajMod.A[idx] < 0.0f ? -0.5f : 0.5f))
     const xyze_long_t steps_tar = LOGICAL_AXIS_ARRAY(
-      TOSTEPS(e, E_AXIS_N(stepper.current_block->extruder)), // May be eliminated if guaranteed positive.
+      TOSTEPS(e, block_extruder_axis), // May be eliminated if guaranteed positive.
       TOSTEPS(x, X_AXIS), TOSTEPS(y, Y_AXIS), TOSTEPS(z, Z_AXIS),
       TOSTEPS(i, I_AXIS), TOSTEPS(j, J_AXIS), TOSTEPS(k, K_AXIS),
       TOSTEPS(u, U_AXIS), TOSTEPS(v, V_AXIS), TOSTEPS(w, W_AXIS)
@@ -730,7 +735,7 @@ void FTMotion::convertToSteps(const uint32_t idx) {
   #else
     #define TOSTEPS(A,B) int32_t(trajMod.A[idx] * planner.settings.axis_steps_per_mm[B]) - steps.A
     xyze_long_t delta = LOGICAL_AXIS_ARRAY(
-      TOSTEPS(e, E_AXIS_N(stepper.current_block->extruder)),
+      TOSTEPS(e, block_extruder_axis),
       TOSTEPS(x, X_AXIS), TOSTEPS(y, Y_AXIS), TOSTEPS(z, Z_AXIS),
       TOSTEPS(i, I_AXIS), TOSTEPS(j, J_AXIS), TOSTEPS(k, K_AXIS),
       TOSTEPS(u, U_AXIS), TOSTEPS(v, V_AXIS), TOSTEPS(w, W_AXIS)

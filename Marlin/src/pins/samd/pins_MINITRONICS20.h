@@ -393,7 +393,7 @@
 
       #elif ENABLED(FYSETC_MINI_12864)
 
-        // From https://wiki.fysetc.com/Mini12864_Panel/
+        // From https://wiki.fysetc.com/docs/Mini12864Panel
 
         // TO TEST
         //#define DOGLCD_A0                   16
@@ -519,19 +519,19 @@
 
   // Default TMC slave addresses
   #ifndef X_SLAVE_ADDRESS
-    #define X_SLAVE_ADDRESS                  0
+    #define X_SLAVE_ADDRESS                    0
   #endif
   #ifndef Y_SLAVE_ADDRESS
-    #define Y_SLAVE_ADDRESS                  1
+    #define Y_SLAVE_ADDRESS                    1
   #endif
   #ifndef Z_SLAVE_ADDRESS
-    #define Z_SLAVE_ADDRESS                  2
+    #define Z_SLAVE_ADDRESS                    2
   #endif
   #ifndef E0_SLAVE_ADDRESS
-    #define E0_SLAVE_ADDRESS                 3
+    #define E0_SLAVE_ADDRESS                   3
   #endif
   #ifndef E1_SLAVE_ADDRESS
-    #define E1_SLAVE_ADDRESS                 0
+    #define E1_SLAVE_ADDRESS                   0
   #endif
   static_assert(X_SLAVE_ADDRESS == 0, "X_SLAVE_ADDRESS must be 0 for BOARD_MINITRONICS20.");
   static_assert(Y_SLAVE_ADDRESS == 1, "Y_SLAVE_ADDRESS must be 1 for BOARD_MINITRONICS20.");
