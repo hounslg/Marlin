@@ -4517,11 +4517,11 @@
   // Options pertaining to MMU2 and MMU2S
   #if HAS_PRUSA_MMU2
     // Enable if the MMU2 has 12V stepper motors (MMU2 Firmware 1.0.2 and up)
-    //#define MMU2_MODE_12V
+  //  #define MMU2_MODE_12V
 
     // Settings for filament load / unload from the LCD menu.
     // This is for Průša MK3-style extruders. Customize for your hardware.
-    #define MMU2_FILAMENTCHANGE_EJECT_FEED 80.0
+    #define MMU2_FILAMENTCHANGE_EJECT_FEED 90.0
 
     // G-code to execute when MMU2 F.I.N.D.A. probe detects filament runout
     #define MMU2_FILAMENT_RUNOUT_SCRIPT "M600"
@@ -4529,7 +4529,9 @@
     // MMU2 sequences use mm/min. Not compatible with MMU3, which use mm/sec.
     #define MMU2_LOAD_TO_NOZZLE_SEQUENCE \
       {  4.4,  871 }, \
-      { 10.0, 1393 }, \
+      { 30.0, 1393 }, \
+      {  4.4,  871 }, \
+      { 20.0,  198 }, \
       {  4.4,  871 }, \
       { 10.0,  198 }
 
