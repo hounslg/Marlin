@@ -2515,7 +2515,7 @@ hal_timer_t Stepper::block_phase_isr() {
 
               if (forward_e != motor_direction(E_AXIS)) {
                 last_direction_bits.toggle(E_AXIS);
-                count_direction.e = -count_direction.e;
+                count_direction.e *= -1;
 
                 DIR_WAIT_BEFORE();
 
@@ -2876,7 +2876,7 @@ hal_timer_t Stepper::block_phase_isr() {
         la_interval = calc_timer_interval(uint32_t(ABS(step_rate)));
         if (forward_e != motor_direction(E_AXIS)) {
           last_direction_bits.toggle(E_AXIS);
-          count_direction.e = -count_direction.e;
+          count_direction.e *= -1;
           DIR_WAIT_BEFORE();
           E_APPLY_DIR(forward_e, false);
           TERN_(FT_MOTION, last_set_direction = last_direction_bits);
