@@ -25,10 +25,9 @@
 #include "planner.h"      // Access block type from planner.
 #include "stepper.h"      // For stepper motion and direction
 
-#include "ft_motion/trajectory_generator.h"
-#include "ft_motion/trapezoidal_trajectory_generator.h"
-#include "ft_motion/poly5_trajectory_generator.h"
-#include "ft_motion/poly6_trajectory_generator.h"
+#include "ft_motion/trajectory_trapezoidal.h"
+#include "ft_motion/trajectory_poly5.h"
+#include "ft_motion/trajectory_poly6.h"
 
 #if HAS_FTM_SHAPING
   #include "ft_motion/shaping.h"
