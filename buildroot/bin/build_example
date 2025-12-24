@@ -188,7 +188,7 @@ echo "Building example $CONFIG..."
 # If doing many builds get a list of all environment names,
 # which also gives us the number of environments.
 if ((MANY)); then
-  ENVLIST=$(mfenvs -n) # BOARD_NAME_STRING (1234): [ env1 env2 env3 ... ]
+  ENVLIST=$(mfenvs) # BOARD_NAME_STRING (1234): [ env1 env2 env3 ... ]
   ENVLIST=${ENVLIST##*: [ }
   ENVARRAY=(${ENVLIST% ]})
   ENVCOUNT=${#ENVARRAY[*]}
@@ -200,8 +200,11 @@ fi
 # Build all from BUILDINDEX onward (usually 1) meaning ALL.
 # MANY with a BUILDINDEX may be useful for continuing an interrupted build.
 
-while ((1)); do
+while true; do
   set +e
+
+  # Skip over "_xfer" environments when building many
+  ((MANY)) && [[ ${ENVARRAY[BUILDINDEX-1]} =~ _xfer$ ]] && { ((BUILDINDEX++)) ; continue; }
 
   echo "Building example $CONFIG ($BUILDINDEX)..."
 
