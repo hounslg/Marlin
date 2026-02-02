@@ -74,11 +74,11 @@
 #endif
 
 #if HAS_DWIN_E3V2
-  #include "lcd/e3v2/common/encoder.h"
+  #include "lcd/dwin/common/encoder.h"
   #if ENABLED(DWIN_CREALITY_LCD)
-    #include "lcd/e3v2/creality/dwin.h"
+    #include "lcd/dwin/creality/dwin.h"
   #elif ENABLED(DWIN_CREALITY_LCD_JYERSUI)
-    #include "lcd/e3v2/jyersui/dwin.h"
+    #include "lcd/dwin/jyersui/dwin.h"
   #elif ENABLED(SOVOL_SV06_RTS)
     #include "lcd/sovol_rts/sovol_rts.h"
   #endif
@@ -260,6 +260,10 @@
   #include "feature/rs485.h"
 #endif
 
+#if ENABLED(SOFT_FEED_HOLD)
+  #include "feature/e_parser.h"
+#endif
+
 /**
  * Spin in place here while keeping temperature processing alive
  */
@@ -282,7 +286,7 @@ Marlin marlin;
 #endif
 
 // Global state of the firmware
-MarlinState Marlin::state = MarlinState::MF_INITIALIZING;
+MarlinState Marlin::state = MF_INITIALIZING;
 
 // For M109 and M190, this flag may be cleared (by M108) to exit the wait loop
 bool Marlin::wait_for_heatup = false;
@@ -404,8 +408,8 @@ void Marlin::startOrResumeJob() {
   }
 
   inline void finishSDPrinting() {
-    if (queue.enqueue_one(F("M1001"))) {        // Keep trying until it gets queued
-      marlin.setState(MarlinState::MF_RUNNING); // Signal to stop trying
+    if (queue.enqueue_one(F("M1001"))) {  // Keep trying until it gets queued
+      marlin.setState(MF_RUNNING);        // Signal to stop trying
       TERN_(PASSWORD_AFTER_SD_PRINT_END, password.lock_machine());
       TERN_(DGUS_LCD_UI_MKS, screen.sdPrintingFinished());
     }
@@ -514,8 +518,14 @@ void Marlin::manage_inactivity(const bool no_stepper_sleep/*=false*/) {
     }
   #endif
 
-  #if ENABLED(FREEZE_FEATURE)
-    stepper.frozen = READ(FREEZE_PIN) == FREEZE_STATE;
+  // Handle the FREEZE button
+  #if ANY(FREEZE_FEATURE, SOFT_FEED_HOLD)
+    stepper.set_frozen_triggered(
+      TERN0(FREEZE_FEATURE, READ(FREEZE_PIN) == FREEZE_STATE)
+      #if ALL(SOFT_FEED_HOLD, REALTIME_REPORTING_COMMANDS)
+        || realtime_ramping_pause_flag
+      #endif
+    );
   #endif
 
   #if HAS_HOME
@@ -724,7 +734,7 @@ void Marlin::manage_inactivity(const bool no_stepper_sleep/*=false*/) {
     // handle delayed move timeout
     if (delayed_move_time && ELAPSED(ms, delayed_move_time) && isRunning()) {
       // travel moves have been received so enact them
-      delayed_move_time = 0xFFFFFFFFUL; // force moves to be done
+      delayed_move_time = UINT32_MAX; // force moves to be done
       destination = current_position;
       prepare_line_to_destination();
       planner.synchronize();
@@ -803,7 +813,7 @@ void Marlin::idle(const bool no_stepper_sleep/*=false*/) {
   TERN_(MAX7219_DEBUG, max7219.idle_tasks());
 
   // Return if setup() isn't completed
-  if (state == MarlinState::MF_INITIALIZING) goto IDLE_DONE;
+  if (is(MF_INITIALIZING)) goto IDLE_DONE;
 
   // TODO: Still causing errors
   TERN_(TOOL_SENSOR, (void)check_tool_sensor_stats(active_extruder, true));
@@ -996,7 +1006,7 @@ void Marlin::stop() {
     SERIAL_ERROR_MSG(STR_ERR_STOPPED);
     LCD_MESSAGE(MSG_STOPPED);
     safe_delay(350);         // Allow enough time for messages to get out before stopping
-    state = MarlinState::MF_STOPPED;
+    setState(MF_STOPPED);
   }
 } // Marlin::stop()
 
@@ -1221,7 +1231,7 @@ void setup() {
     #endif
   #endif
 
-  #if ENABLED(FREEZE_FEATURE)
+  #if ENABLED(FREEZE_FEATURE) && DISABLED(NO_FREEZE_PIN)
     SETUP_LOG("FREEZE_PIN");
     #if FREEZE_STATE
       SET_INPUT_PULLDOWN(FREEZE_PIN);
@@ -1709,7 +1719,7 @@ void setup() {
     SETUP_RUN(ftMotion.init());
   #endif
 
-  marlin.setState(MarlinState::MF_RUNNING);
+  marlin.setState(MF_RUNNING);
 
   #ifdef STARTUP_TUNE
     // Play a short startup tune before continuing.
@@ -1741,7 +1751,7 @@ void loop() {
 
     #if HAS_MEDIA
       if (card.flag.abort_sd_printing) abortSDPrinting();
-      if (marlin.is(MarlinState::MF_SD_COMPLETE)) finishSDPrinting();
+      if (marlin.is(MF_SD_COMPLETE)) finishSDPrinting();
     #endif
 
     queue.advance();
