@@ -494,7 +494,7 @@ typedef struct SettingsDataStruct {
   per_stepper_bool_t tmc_stealth_enabled;               // M569 X Y Z...
 
   //
-  // LIN_ADVANCE
+  // Linear Advance
   //
   #if HAS_LIN_ADVANCE_K
     float planner_extruder_advance_K[DISTINCT_E];       // M900 K  planner.extruder_advance_K
@@ -1809,7 +1809,7 @@ void MarlinSettings::postprocess() {
     // Nonlinear Extrusion
     //
     #if ENABLED(NONLINEAR_EXTRUSION)
-      EEPROM_WRITE(stepper.ne.settings);
+      EEPROM_WRITE(stepper.nle.settings);
     #endif
 
     //
@@ -1876,8 +1876,13 @@ void MarlinSettings::postprocess() {
 
     TERN_(EXTENSIBLE_UI, ExtUI::onSettingsStored(success));
 
+    // Remember the error condition so One-Click Printing can be skipped
+    #if ENABLED(ONE_CLICK_PRINT) && NONE(EEPROM_AUTO_INIT, EEPROM_INIT_NOW)
+      working_crc = uint16_t(eeprom_error);
+    #endif
+
     return success;
-  }
+  } // save
 
   EEPROM_Error MarlinSettings::check_version() {
     if (!EEPROM_START(EEPROM_OFFSET)) return ERR_EEPROM_NOPROM;
@@ -2957,7 +2962,7 @@ void MarlinSettings::postprocess() {
       // Nonlinear Extrusion
       //
       #if ENABLED(NONLINEAR_EXTRUSION)
-        EEPROM_READ(stepper.ne.settings);
+        EEPROM_READ(stepper.nle.settings);
       #endif
 
       //
@@ -3077,8 +3082,13 @@ void MarlinSettings::postprocess() {
       if (!validating && TERN1(EEPROM_BOOT_SILENT, marlin.isRunning())) report();
     #endif
 
+    // Remember the error condition so One-Click Printing can be skipped
+    #if ENABLED(ONE_CLICK_PRINT) && NONE(EEPROM_AUTO_INIT, EEPROM_INIT_NOW)
+      working_crc = uint16_t(eeprom_error);
+    #endif
+
     return eeprom_error;
-  }
+  } // _load
 
   #ifdef ARCHIM2_SPI_FLASH_EEPROM_BACKUP_SIZE
     extern bool restoreEEPROM();
@@ -3146,7 +3156,7 @@ void MarlinSettings::postprocess() {
 
   #if ENABLED(AUTO_BED_LEVELING_UBL)
 
-    inline void ubl_invalid_slot(const int s) {
+    static void ubl_invalid_slot(const int s) {
       DEBUG_ECHOLN(F("?Invalid "), F("slot.\n"), s, F(" mesh slots available."));
       UNUSED(s);
     }
@@ -3635,7 +3645,7 @@ void MarlinSettings::reset() {
   //
   // Linear Advance
   //
-  #if ENABLED(LIN_ADVANCE)
+  #if HAS_LIN_ADVANCE_K
     #if ENABLED(DISTINCT_E_FACTORS)
 
       constexpr float linAdvanceK[] = ADVANCE_K;
@@ -3659,7 +3669,7 @@ void MarlinSettings::reset() {
       #endif
 
     #endif
-  #endif // LIN_ADVANCE
+  #endif // HAS_LIN_ADVANCE_K
 
   //
   // Motor Current PWM
@@ -3790,7 +3800,7 @@ void MarlinSettings::reset() {
   //
   // Nonlinear Extrusion
   //
-  TERN_(NONLINEAR_EXTRUSION, stepper.ne.settings.reset());
+  TERN_(NONLINEAR_EXTRUSION, stepper.nle.settings.reset());
 
   //
   // Input Shaping
