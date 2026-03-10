@@ -22,8 +22,6 @@
 #pragma once
 
 #define CONFIG_EXAMPLES_DIR "Creality/Ender-3 Pro/BigTreeTech SKR Mini E3 3.0/base"
-#define DIAG_JUMPERS_REMOVED															   
-										  
 
 /**
  * Configuration.h
@@ -1710,7 +1708,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { -42, -8, 0 } // (mm) X, Y, Z distance from Nozzle tip to Probe trigger-point
+#define NOZZLE_TO_PROBE_OFFSET { -42, -2, 0 } // (mm) X, Y, Z distance from Nozzle tip to Probe trigger-point
 
 // Enable and set to use a specific tool for probing. Disable to allow any tool.
 #define PROBING_TOOL 0
@@ -1726,7 +1724,7 @@
 
 // X and Y axis travel speed between probes.
 // Leave undefined to use the average of the current XY homing feedrate.
-#define XY_PROBE_FEEDRATE    (160*60) // (mm/min)
+#define XY_PROBE_FEEDRATE    (166*60) // (mm/min)
 
 // Feedrate for the first approach when double-probing (MULTIPLE_PROBING == 2)
 #define Z_PROBE_FEEDRATE_FAST  (6*60) // (mm/min)
@@ -1797,7 +1795,7 @@
  * Example: 'M851 Z-5' with a CLEARANCE of 4  =>  9mm from bed to nozzle.
  *     But: 'M851 Z+1' with a CLEARANCE of 2  =>  2mm from bed to nozzle.
  */
-#define Z_CLEARANCE_DEPLOY_PROBE   6 // (mm) Z Clearance for Deploy/Stow
+#define Z_CLEARANCE_DEPLOY_PROBE   5 // (mm) Z Clearance for Deploy/Stow
 #define Z_CLEARANCE_BETWEEN_PROBES  3 // (mm) Z Clearance between probe points
 #define Z_CLEARANCE_MULTI_PROBE     2 // (mm) Z Clearance between multiple probes
 #define Z_PROBE_ERROR_TOLERANCE     3 // (mm) Tolerance for early trigger (<= -probe.offset.z + ZPET)
@@ -1952,7 +1950,7 @@
 
 // The size of the printable area
 #define X_BED_SIZE 235
-#define Y_BED_SIZE 220
+#define Y_BED_SIZE 230
 
 // Travel limits (linear=mm, rotational=°) after homing, corresponding to endstop positions.
 #define X_MIN_POS 0
@@ -2295,7 +2293,7 @@
   //========================= Unified Bed Leveling ============================
   //===========================================================================
 
-  define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
+  #define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
 
   #define MESH_INSET 1              // Set Mesh bounds as an inset region of the bed
   #define GRID_MAX_POINTS_X 10      // Don't use more than 15 points per axis, implementation limited.
@@ -2564,7 +2562,6 @@
 #define PREHEAT_3_TEMP_BED    90
 #define PREHEAT_3_TEMP_CHAMBER 0
 #define PREHEAT_3_FAN_SPEED     0 // Value from 0 to 255	
-
 /**
  * @section nozzle park
  *
@@ -3589,6 +3586,10 @@
 #if ENABLED(DWIN_CREALITY_LCD)
   //#define USE_STRING_HEADINGS       // Use string headings for Creality UI instead of images
   //#define USE_STRING_TITLES         // Use string titles for Creality UI instead of images
+#endif
+
+#if ENABLED(DWIN_LCD_PROUI)
+  #define REVERSE_ENCODER_MENU_ITEM   // Enable menu item to toggle direction
 #endif
 
 //
