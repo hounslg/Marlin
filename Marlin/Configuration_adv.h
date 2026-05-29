@@ -3162,7 +3162,7 @@
   #if AXIS_IS_TMC_CONFIG(X)
     #define X_CURRENT       580        // (mA) RMS current. Multiply by 1.414 for peak current.
     #define X_CURRENT_HOME  (X_CURRENT/2)  // (mA) RMS current for homing. (Typically lower than *_CURRENT.)
-    #define X_MICROSTEPS     32        // 0..256
+    #define X_MICROSTEPS     16        // 0..256
     #define X_RSENSE          0.11
     #define X_CHAIN_POS      -1        // -1..0: Not chained. 1: MCU MOSI connected. 2: Next in chain, ...
     //#define X_INTERPOLATE  true      // Enable to override 'INTERPOLATE' for the X axis
@@ -3182,7 +3182,7 @@
   #if AXIS_IS_TMC_CONFIG(Y)
     #define Y_CURRENT       580
     #define Y_CURRENT_HOME  (Y_CURRENT/2)
-    #define Y_MICROSTEPS     32
+    #define Y_MICROSTEPS     16
     #define Y_RSENSE          0.11
     #define Y_CHAIN_POS      -1
     //#define Y_INTERPOLATE  true
@@ -4295,7 +4295,7 @@
   #define CONFIG_MENU_ITEM_4_GCODE "M593 X F33.00 D0.25\nM593 Y F40.00 D0.5\nM500"
   #define CONFIG_MENU_ITEM_4_CONFIRM									
   //#define CONFIG_MENU_ITEM_2_CONFIRM
-  #define CONFIG_MENU_ITEM_2_IMMEDIATE								
+  #define CONFIG_MENU_ITEM_4_IMMEDIATE								
   //#define CONFIG_MENU_ITEM_3_DESC "Radio OFF"
   //#define CONFIG_MENU_ITEM_3_GCODE "M118 [ESP110] OFF pwd=12345678"
   //#define CONFIG_MENU_ITEM_3_CONFIRM
