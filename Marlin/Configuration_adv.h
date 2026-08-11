@@ -475,6 +475,11 @@
       #define PID_FAN_SCALING_MIN_SPEED 10               // Minimum fan speed at which to enable PID_FAN_SCALING
     #endif
   #endif
+  #if ENABLED(PID_PARAMS_PER_HOTEND)
+    // Specify up to one value per hotend here, according to your setup.
+    // If there are fewer values, the last one applies to the remaining hotends.
+    #define DEFAULT_KF_LIST { DEFAULT_KF, DEFAULT_KF }
+  #endif
 #endif
 
 /**
@@ -1137,7 +1142,7 @@
 #if ENABLED(ASSISTED_TRAMMING)
 
   // Define from 3 to 9 points to probe.
-  #define TRAMMING_POINT_XY { {  20, 20 }, { 180,  20 }, { 180, 180 }, { 20, 180 } }
+  #define TRAMMING_POINT_XY { {  30, 30 }, { 203,  30 }, { 203, 203 }, { 20, 203 } }
 
   // Define position names for probe points.
   #define TRAMMING_POINT_NAME_1 "Front-Left"
@@ -1946,17 +1951,21 @@
 
   // SD Card Sorting options
   #if ENABLED(SDCARD_SORT_ALPHA)
-    #define SDSORT_REVERSE     false  // Default to sorting file names in reverse order.
-    #define SDSORT_LIMIT       40     // Maximum number of sorted items (10-256). Costs 27 bytes each.
-    #define SDSORT_FOLDERS     -1     // -1=above  0=none  1=below
-    #define SDSORT_GCODE       false  // Enable G-code M34 to set sorting behaviors: M34 S<-1|0|1> F<-1|0|1>
-    #define SDSORT_USES_RAM    true   // Pre-allocate a static array for faster pre-sorting.
-    #define SDSORT_USES_STACK  false  // Prefer the stack for pre-sorting to give back some SRAM. (Negated by next 2 options.)
-    #define SDSORT_CACHE_NAMES true   // Keep sorted items in RAM longer for speedy performance. Most expensive option.
-    #define SDSORT_DYNAMIC_RAM false  // Use dynamic allocation (within SD menus). Least expensive option. Set SDSORT_LIMIT before use!
-    #define SDSORT_CACHE_VFATS 2      // Maximum number of 13-byte VFAT entries to use for sorting.
-                                      // Note: Only affects SCROLL_LONG_FILENAMES with SDSORT_CACHE_NAMES but not SDSORT_DYNAMIC_RAM.
-    #define SDSORT_QUICK       true   // Use Quick Sort as a sorting algorithm. Otherwise use Bubble Sort.
+    #define SDSORT_QUICK           true   // Use Quick Sort as a sorting algorithm. Otherwise use Bubble Sort.
+    #define SDSORT_REVERSE         false  // Default to sorting file names in reverse order.
+    #define SDSORT_LIMIT           40     // Maximum number of sorted items (10-256). Costs 27 bytes each.
+    #define SDSORT_FOLDERS        -1      // -1=above  0=none  1=below
+    #define SDSORT_GCODE           false  // Enable G-code M34 to set sorting behaviors: M34 S<-1|0|1> F<-1|0|1>
+    #define SDSORT_USES_STACK      false  // Prefer the stack for pre-sorting to give back some SRAM. (Negated by next 2 options.)
+    #define SDSORT_USES_RAM        true   // Pre-allocate a static array for faster pre-sorting.
+    #if ENABLED(SDSORT_USES_RAM)
+      #define SDSORT_CACHE_NAMES   true   // Keep sorted items in RAM longer for speedy performance. Most expensive option.
+      #if ENABLED(SDSORT_CACHE_NAMES)
+        #define SDSORT_DYNAMIC_RAM false  // Use dynamic allocation (within SD menus). Least expensive option. Set SDSORT_LIMIT before use!
+        #define SDSORT_CACHE_VFATS 2      // Maximum number of 13-byte VFAT entries to use for sorting.
+                                          // Note: Only affects SCROLL_LONG_FILENAMES with SDSORT_CACHE_NAMES but not SDSORT_DYNAMIC_RAM.
+      #endif
+    #endif
   #endif
 
   // Allow international symbols in long filenames. To display correctly, the
@@ -1964,7 +1973,7 @@
   //#define UTF_FILENAME_SUPPORT
 
   #define LONG_FILENAME_HOST_SUPPORT      // Get the long filename of a file/folder with 'M33 <dosname>' and list long filenames with 'M20 L'
-  #define LONG_FILENAME_WRITE_SUPPORT   // Create / delete files with long filenames via M28, M30, and Binary Transfer Protocol
+  //#define LONG_FILENAME_WRITE_SUPPORT   // Create / delete files with long filenames via M28, M30, and Binary Transfer Protocol
   //#define M20_TIMESTAMP_SUPPORT         // Include timestamps by adding the 'T' flag to M20 commands
 
   #define SCROLL_LONG_FILENAMES           // Scroll long filenames in the SD card menu
@@ -2563,9 +2572,9 @@
  * the probe to be unable to reach any points.
  */
 #if PROBE_SELECTED && !IS_KINEMATIC
-  #define PROBING_MARGIN_LEFT PROBING_MARGIN
+  //#define PROBING_MARGIN_LEFT PROBING_MARGIN
   //#define PROBING_MARGIN_RIGHT PROBING_MARGIN
-  #define PROBING_MARGIN_FRONT PROBING_MARGIN
+  //#define PROBING_MARGIN_FRONT PROBING_MARGIN
   //#define PROBING_MARGIN_BACK PROBING_MARGIN
 #endif
 
@@ -2974,6 +2983,8 @@
    * Extra G-code to run while executing tool-change commands. Can be used to use an additional
    * stepper motor (e.g., I axis in Configuration.h) to drive the tool-changer.
    */
+  //#define EVENT_GCODE_PARK_T0 "G28 A\nG1 A0"        // Extra G-code to run before tool-change command (if T0 was active)
+  //#define EVENT_GCODE_PARK_T1 "G1 A10"              // Extra G-code to run before tool-change command (if T1 was active)
   //#define EVENT_GCODE_TOOLCHANGE_T0 "G28 A\nG1 A0"  // Extra G-code to run while executing tool-change command T0
   //#define EVENT_GCODE_TOOLCHANGE_T1 "G1 A10"        // Extra G-code to run while executing tool-change command T1
   //#define EVENT_GCODE_TOOLCHANGE_ALWAYS_RUN         // Always execute above G-code sequences. Use with caution!
@@ -4282,35 +4293,24 @@
 // @section custom config menu
 
 // Custom Menu: Configuration Menu
-#define CUSTOM_MENU_CONFIG
+//#define CUSTOM_MENU_CONFIG
 #if ENABLED(CUSTOM_MENU_CONFIG)
-  #define CUSTOM_MENU_CONFIG_TITLE "Initial Set Up"
-  
-  #define CUSTOM_MENU_CONFIG_SCRIPT_DONE "M117 Setup Done"
+  //#define CUSTOM_MENU_CONFIG_TITLE "Custom Commands"
+  #define CUSTOM_MENU_CONFIG_SCRIPT_DONE "M117 Wireless Script Done"
   #define CUSTOM_MENU_CONFIG_SCRIPT_AUDIBLE_FEEDBACK
-  #define CUSTOM_MENU_CONFIG_SCRIPT_RETURN  // Return to status screen after a script
+  //#define CUSTOM_MENU_CONFIG_SCRIPT_RETURN  // Return to status screen after a script
   #define CUSTOM_MENU_CONFIG_ONLY_IDLE        // Only show custom menu when the machine is idle
 
-  #define CONFIG_MENU_ITEM_1_DESC "Bed Y offset by 2mm"
-  #define CONFIG_MENU_ITEM_1_GCODE "M206 Y-2"
+  #define CONFIG_MENU_ITEM_1_DESC "Wifi ON"
+  #define CONFIG_MENU_ITEM_1_GCODE "M118 [ESP110] WIFI-STA pwd=12345678"
   //#define CONFIG_MENU_ITEM_1_CONFIRM        // Show a confirmation dialog before this action
   //#define CONFIG_MENU_ITEM_1_IMMEDIATE      // Skip the queue and execute immediately. Rarely needed.
 
-  #define CONFIG_MENU_ITEM_2_DESC "Hotend PID 210 8 cycles"
-  #define CONFIG_MENU_ITEM_2_GCODE "M303 E0 S210 U1 C8\nM500"
-  #define CONFIG_MENU_ITEM_2_CONFIRM
-
-  #define CONFIG_MENU_ITEM_3_DESC "Bed PID 65 8 cycles"
-  #define CONFIG_MENU_ITEM_3_GCODE "M303 E-1 S66 U1 C8\nM500"
-  #define CONFIG_MENU_ITEM_3_CONFIRM
+  #define CONFIG_MENU_ITEM_2_DESC "Bluetooth ON"
+  #define CONFIG_MENU_ITEM_2_GCODE "M118 [ESP110] BT pwd=12345678"
   //#define CONFIG_MENU_ITEM_2_CONFIRM
   //#define CONFIG_MENU_ITEM_2_IMMEDIATE
 
-  #define CONFIG_MENU_ITEM_4_DESC "M593 Input Shaping X & Y"
-  #define CONFIG_MENU_ITEM_4_GCODE "M593 X F33.00 D0.25\nM593 Y F40.00 D0.5\nM500"
-  #define CONFIG_MENU_ITEM_4_CONFIRM									
-  //#define CONFIG_MENU_ITEM_2_CONFIRM
-  #define CONFIG_MENU_ITEM_4_IMMEDIATE								
   //#define CONFIG_MENU_ITEM_3_DESC "Radio OFF"
   //#define CONFIG_MENU_ITEM_3_GCODE "M118 [ESP110] OFF pwd=12345678"
   //#define CONFIG_MENU_ITEM_3_CONFIRM
@@ -4381,10 +4381,10 @@
  */
 #define HOST_ACTION_COMMANDS
 #if ENABLED(HOST_ACTION_COMMANDS)
-  //#define HOST_PAUSE_M76                // Tell the host to pause in response to M76
+  #define HOST_PAUSE_M76                  // Tell the host to pause in response to M76
   #define HOST_PROMPT_SUPPORT             // Initiate host prompts to get user feedback
   #if ENABLED(HOST_PROMPT_SUPPORT)
-    #define HOST_STATUS_NOTIFICATIONS     // Send some status messages to the host as notifications
+    #define HOST_STATUS_NOTIFICATIONS   // Send some status messages to the host as notifications
   #endif
   //#define HOST_START_MENU_ITEM          // Add a menu item that tells the host to start
   //#define HOST_SHUTDOWN_MENU_ITEM       // Add a menu item that tells the host to shut down
