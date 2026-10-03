@@ -882,6 +882,8 @@
   #include "stm32h7/pins_FYSETC_SPIDER_KING_V1_H723.h"   // STM32H7                         env:STM32H723ZG_fysetc
 #elif MB(FYSETC_SPIDER_KING_V1_1_H723)
   #include "stm32h7/pins_FYSETC_SPIDER_KING_V1_1_H723.h" // STM32H7                         env:STM32H723ZG_fysetc
+#elif MB(BTT_SCYLLA_V1_0)
+  #include "stm32h7/pins_BTT_SCYLLA_V1_0.h"              // STM32H7                         env:STM32H723VG_btt
 
 //
 // Espressif ESP32
@@ -913,6 +915,8 @@
   #include "esp32/pins_MM_JOKER.h"                  // ESP32                                env:esp32
 #elif MB(MKS_DLC32_V2_1)
   #include "esp32/pins_MKS_DLC32_V2_1.h"            // ESP32                                env:mks_dlc32_v2_1
+#elif MB(BTT_RODENT_V1)
+  #include "esp32/pins_BTT_RODENT_V1.h"             // ESP32                                env:esp32
 
 //
 // Adafruit Grand Central M4 (SAMD51 ARM Cortex-M4)
